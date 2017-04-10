@@ -21,12 +21,15 @@ def main():
     print("{} / {} = {:.2}% were valid ways!".format(answer, 2**rows, answer/2**rows * 100))
 
 def start_sim(prev_pos, pos, enemies):
-    # Stop recursing if we've discovred this path fails
+    # Stop recursing if we've discovered this path fails
     for enemy in enemies:
         if enemy.pos == pos:
             return 0
+
+    if pos.c == cols or pos.c < 0:
+        return 0
     
-    # If we've already reached this point, we know already know the answer from this point
+    # If we've already reached this point, we already know the answer from this point
     if valid_ways_to_escape_from[pos] != 0:
         return valid_ways_to_escape_from[pos]
 
