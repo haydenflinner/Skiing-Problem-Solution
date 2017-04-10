@@ -15,8 +15,7 @@ def main():
     for row in range(rows):
         for col in range(cols):
             if isprime(10 * row + col):
-                e = Enemy(Pos(row, col), (2 * row + col) % 3)
-                enemies.append(e)
+                enemies.append(Enemy(Pos(row, col), (2 * row + col) % 3))
 
     answer = start_sim(None, Pos(0,25), enemies)
     print("{} / {} = {:.2}% were valid ways!".format(answer, 2**rows, answer/2**rows * 100))
