@@ -21,21 +21,18 @@ def main():
     print("{} / {} = {:.2}% were valid ways!".format(answer, 2**rows, answer/2**rows * 100))
 
 def start_sim(prev_pos, pos, enemies):
-    # Stop recursing if we've discovered this path fails
     for enemy in enemies:
         if enemy.pos == pos:
-            return 0
+            return 0 # This path fails!
 
-    if pos.c == cols or pos.c < 0:
-        return 0
+    if pos.c == cols or pos.c < 0: return 0 # Out of bounds
     
-    # If we've already reached this point, we already know the answer from this point
-    if valid_ways_to_escape_from[pos] != 0:
-        return valid_ways_to_escape_from[pos]
+    # If we've already reached this position, we already know the answer
+    if valid_ways_to_escape_from[pos] != 0: return valid_ways_to_escape_from[pos]
 
-    if pos.r == rows: # We made it out!
-        return 1
+    if pos.r == rows: return 1 # Made it to safety!
 
+    # We don't know the answer for this point, DFS from here to find it!
     new_enemies = [next_move(e) for e in enemies]
     future = [Pos(pos.r + 1, pos.c + 1), Pos(pos.r + 1, pos.c - 1)] # Left+Down or Right+Down
     for next_pos in future:
@@ -49,7 +46,8 @@ def next_move(e):
         colup = 1
     if e.next_move == WEST:
         colup = -1
-    newpos = Pos(e.pos.r + 1, e.pos.c + colup)
+    rowup = int(e.next_move != STOP)
+    newpos = Pos(e.pos.r + rowup, e.pos.c + colup)
     return Enemy(newpos, (e.next_move + 1) % 3)
 
 main()
