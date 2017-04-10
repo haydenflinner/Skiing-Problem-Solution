@@ -1,8 +1,8 @@
 from sympy import isprime
 from collections import defaultdict, namedtuple
 
-cols = 35
-rows = 51
+cols = 51
+rows = 35
 EAST, WEST, STOP = 0,1,2
 
 valid_ways_to_escape_from = defaultdict(lambda: 0)
@@ -18,35 +18,28 @@ def main():
                 e = Enemy(Pos(row, col), (2 * row + col) % 3)
                 enemies.append(e)
 
-    starting_loc = Pos(0,25)
-    start_sim(None, starting_loc, enemies)
-
-    answer = valid_ways_to_escape_from[starting_loc]
-    poss_moves = 2**rows
-    print("{} / {} = {:.2}% were valid ways!".format(answer, poss_moves, answer/poss_moves * 100))
+    answer = start_sim(None, Pos(0,25), enemies)
+    print("{} / {} = {:.2}% were valid ways!".format(answer, 2**rows, answer/2**rows * 100))
 
 def start_sim(prev_pos, pos, enemies):
     # Stop recursing if we've discovred this path fails
     for enemy in enemies:
         if enemy.pos == pos:
-            return
-    if pos.c == cols or pos.c < 0: return
+            return 0
     
     # If we've already reached this point, we know already know the answer from this point
     if valid_ways_to_escape_from[pos] != 0:
-        valid_ways_to_escape_from[prev_pos] += valid_ways_to_escape_from[pos]
-        return
+        return valid_ways_to_escape_from[pos]
 
     if pos.r == rows: # We made it out!
-        valid_ways_to_escape_from[pos] = 1
-        return
+        return 1
 
-    new_ens = [next_move(e) for e in enemies]
+    new_enemies = [next_move(e) for e in enemies]
     future = [Pos(pos.r + 1, pos.c + 1), Pos(pos.r + 1, pos.c - 1)] # Left+Down or Right+Down
     for next_pos in future:
-        start_sim(pos, next_pos, new_ens)
+        valid_ways_to_escape_from[pos] += start_sim(pos, next_pos, new_enemies)
 
-    valid_ways_to_escape_from[prev_pos] += valid_ways_to_escape_from[pos]
+    return valid_ways_to_escape_from[pos]
 
 def next_move(e):
     colup = 0
