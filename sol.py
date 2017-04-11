@@ -17,6 +17,9 @@ def main():
             if isprime(10 * row + col):
                 enemies.append(Enemy(Pos(row, col), (2 * row + col) % 3))
 
+    for col in range(cols):
+        valid_ways_to_escape_from[Pos(rows - 1, col)] = 1
+
     answer = start_sim(None, Pos(0,25), enemies)
     print("{} / {} = {:.2}% were valid ways!".format(answer, 2**rows, answer/2**rows * 100))
 
@@ -25,12 +28,12 @@ def start_sim(prev_pos, pos, enemies):
         if enemy.pos == pos:
             return 0 # This path fails!
 
-    if pos.c == cols or pos.c < 0: return 0 # Out of bounds
+    if pos.c == cols or pos.c < 0:
+        return 0 # Out of bounds
     
     # If we've already reached this position, we already know the answer
-    if valid_ways_to_escape_from[pos] != 0: return valid_ways_to_escape_from[pos]
-
-    if pos.r == rows: return 1 # Made it to safety!
+    if valid_ways_to_escape_from[pos] != 0:
+        return valid_ways_to_escape_from[pos]
 
     # We don't know the answer for this point, DFS from here to find it!
     new_enemies = [next_move(e) for e in enemies]
